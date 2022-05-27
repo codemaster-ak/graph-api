@@ -12,8 +12,10 @@ router = APIRouter()
 @router.get("/", response_model=list)
 async def get_all_files():
     dirname = os.path.join(".", "files")
-    files = os.listdir(dirname)
-    response = list(map(lambda name: {"name": name[:-5]}, files))
+    response = []
+    if os.path.exists(dirname):
+        files = os.listdir(dirname)
+        response = list(map(lambda name: {"name": name[:-5]}, files))
     return response
 
 
