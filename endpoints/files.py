@@ -4,7 +4,7 @@ import os
 
 from fastapi import APIRouter, HTTPException, status
 
-from utils import to_base_colours
+from utils import stack_to_base_colours
 
 router = APIRouter()
 
@@ -32,28 +32,28 @@ async def get_file(file_name: str):
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def save_file(matrix: list):
+async def save_file(stack: list):
     date = datetime.datetime.now()
     file_name = str(date.day) + "." + str(date.month) + "-" + str(date.hour) + ":" + str(date.minute) + ".json"
-    matrix = to_base_colours(matrix)
+    base_colours_stack = stack_to_base_colours(stack)
     files_path = os.path.join(".", "files")
     if not (os.path.exists(files_path) and os.path.isdir(files_path)):
         os.mkdir(files_path)
     file_path = os.path.join(files_path, file_name)
     file = open(file_path, "w+")
-    content = json.dumps(matrix)
+    content = json.dumps(base_colours_stack)
     file.write(content)
     file.close()
     return {"name": file_name[:-5]}
 
 
 @router.put("/{file_name}")
-async def update_file(file_name: str, matrix: list):
-    matrix = to_base_colours(matrix)
+async def update_file(file_name: str, stack: list):
+    stack = stack_to_base_colours(stack)
     file_path = os.path.join(".", "files", file_name + ".json")
     if os.path.exists(file_path):
         file = open(file_path, "w+")
-        content = json.dumps(matrix)
+        content = json.dumps(stack)
         file.write(content)
         file.close()
         return {"detail": 'Success'}
